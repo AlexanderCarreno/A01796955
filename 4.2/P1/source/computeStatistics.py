@@ -17,6 +17,28 @@ import sys
 import time
 
 
+class StatisticsData:
+    """Data class to hold statistics calculation parameters."""
+
+    def __init__(self, numbers, mean, median, modes, variance, std_dev):
+        """Initialize statistics data.
+
+        Args:
+            numbers (list): List of numbers
+            mean (float): The mean value
+            median (float): The median value
+            modes (list): List of mode values
+            variance (float): The variance value
+            std_dev (float): The standard deviation value
+        """
+        self.numbers = numbers
+        self.mean = mean
+        self.median = median
+        self.modes = modes
+        self.variance = variance
+        self.std_dev = std_dev
+
+
 def read_numbers_from_file(filename):
     """
     Read numbers from a file, handling invalid data gracefully.
@@ -91,9 +113,11 @@ def calculate_median(numbers):
     n = len(sorted_nums)
 
     if n % 2 == 1:
-        return sorted_nums[n // 2]
+        median = sorted_nums[n // 2]
     else:
-        return (sorted_nums[n // 2 - 1] + sorted_nums[n // 2]) / 2
+        median = (sorted_nums[n // 2 - 1] + sorted_nums[n // 2]) / 2
+
+    return median
 
 
 def calculate_mode(numbers):
@@ -132,8 +156,9 @@ def calculate_variance(numbers, mean):
     Returns:
         float: The variance value
     """
-    sum_squared_deviations = sum((num - mean) ** 2 for num in numbers)
-    return sum_squared_deviations / len(numbers)
+    mean = sum(numbers) / len(numbers)
+    squared_diffs = [(x - mean) ** 2 for x in numbers]
+    return sum(squared_diffs) / (len(numbers) - 1)
 
 
 def calculate_std_deviation(variance):
@@ -149,33 +174,28 @@ def calculate_std_deviation(variance):
     return variance ** 0.5
 
 
-def format_results(numbers, mean, median, modes, variance, std_dev):
+def format_results(stats_data):
     """
     Format the statistical results for display.
 
     Args:
-        numbers (list): List of numbers
-        mean (float): The mean value
-        median (float): The median value
-        modes (list): List of mode values
-        variance (float): The variance value
-        std_dev (float): The standard deviation value
+        stats_data (StatisticsData): Object containing all statistics data
 
     Returns:
         str: Formatted results string
     """
-    modes_str = ', '.join(f"{mode:.2f}" for mode in modes)
+    modes_str = ', '.join(f"{mode:.2f}" for mode in stats_data.modes)
 
     results = (
         "\n" + "=====================================" + "\n"
         "DESCRIPTIVE STATISTICS RESULTS\n"
         "=====================================" + "\n"
-        f"Number of items: {len(numbers)}\n"
-        f"Mean: {mean:.2f}\n"
-        f"Median: {median:.2f}\n"
+        f"Number of items: {len(stats_data.numbers)}\n"
+        f"Mean: {stats_data.mean:.2f}\n"
+        f"Median: {stats_data.median:.2f}\n"
         f"Mode(s): {modes_str}\n"
-        f"Variance: {variance:.2f}\n"
-        f"Standard Deviation: {std_dev:.2f}\n"
+        f"Variance: {stats_data.variance:.2f}\n"
+        f"Standard Deviation: {stats_data.std_dev:.2f}\n"
         "=====================================" + "\n"
     )
 
@@ -207,8 +227,11 @@ def main():
     end_time = time.time()
     elapsed_time = end_time - start_time
 
+    # Create statistics data object
+    stats_data = StatisticsData(numbers, mean, median, modes, variance, std_dev)
+
     # Format results
-    results = format_results(numbers, mean, median, modes, variance, std_dev)
+    results = format_results(stats_data)
     time_str = f"Execution time: {elapsed_time:.4f} seconds\n"
 
     # Display on console
@@ -217,12 +240,12 @@ def main():
 
     # Write to file
     try:
-        with open('StatisticsResults.txt', 'w') as output_file:
+        with open('./4.2/P1/results/StatisticsResults.txt', 'w', encoding='utf-8') as output_file:
             output_file.write(results)
             output_file.write(time_str)
-        print(f"Results saved to 'StatisticsResults.txt'")
+        print("Results saved to '/4.2/P1/results/StatisticsResults.txt'")
     except IOError as e:
-        print(f"Error: Could not write to 'StatisticsResults.txt': {e}")
+        print(f"Error: Could not write to '/4.2/P1/results/StatisticsResults.txt': {e}")
         sys.exit(1)
 
 

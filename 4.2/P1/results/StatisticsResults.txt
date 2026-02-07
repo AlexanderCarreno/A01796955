@@ -1,0 +1,12 @@
+
+=====================================
+DESCRIPTIVE STATISTICS RESULTS
+=====================================
+Number of items: 400
+Mean: 242.32
+Median: 239.50
+Mode(s): 170.00, 393.00
+Variance: 21152.80
+Standard Deviation: 145.44
+=====================================
+Execution time: 0.0010 seconds
