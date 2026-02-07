@@ -1,12 +1,83 @@
-
 =====================================
-DESCRIPTIVE STATISTICS RESULTS
+DESCRIPTIVE STATISTICS RESULTS for .\4.2\P1\tests\TC1.txt
 =====================================
 Number of items: 400
 Mean: 242.32
 Median: 239.50
-Mode(s): 170.00, 393.00
+Mode(s): 393.00
 Variance: 21152.80
 Standard Deviation: 145.44
 =====================================
 Execution time: 0.0010 seconds
+
+=====================================
+DESCRIPTIVE STATISTICS RESULTS for .\4.2\P1\tests\TC2.txt
+=====================================
+Number of items: 1977
+Mean: 250.78
+Median: 247.00
+Mode(s): 230.00
+Variance: 20795.89
+Standard Deviation: 144.21
+=====================================
+Execution time: 0.0005 seconds
+
+=====================================
+DESCRIPTIVE STATISTICS RESULTS for .\4.2\P1\tests\TC3.txt
+=====================================
+Number of items: 12624
+Mean: 249.78
+Median: 249.00
+Mode(s): 94.00
+Variance: 21118.95
+Standard Deviation: 145.32
+=====================================
+Execution time: 0.0040 seconds
+
+=====================================
+DESCRIPTIVE STATISTICS RESULTS for .\4.2\P1\tests\TC4.txt
+=====================================
+Number of items: 12624
+Mean: 149.00
+Median: 147.75
+Mode(s): 123.75
+Variance: 17009.27
+Standard Deviation: 130.42
+=====================================
+Execution time: 0.0050 seconds
+
+=====================================
+DESCRIPTIVE STATISTICS RESULTS for .\4.2\P1\tests\TC5.txt
+=====================================
+Number of items: 307
+Mean: 241.50
+Median: 241.00
+Mode(s): 393.00
+Variance: 21229.17
+Standard Deviation: 145.70
+=====================================
+Execution time: 0.0000 seconds
+
+=====================================
+DESCRIPTIVE STATISTICS RESULTS for .\4.2\P1\tests\TC6.txt
+=====================================
+Number of items: 3000
+Mean: 187906599279774728192.00
+Median: 188008049965542998016.00
+Mode(s): NA
+Variance: 11534749616069338239761958751339425038336.00
+Standard Deviation: 107399951657667608576.00
+=====================================
+Execution time: 0.0010 seconds
+
+=====================================
+DESCRIPTIVE STATISTICS RESULTS for .\4.2\P1\tests\TC7.txt
+=====================================
+Number of items: 12767
+Mean: 247467395499714904064.00
+Median: 246640973074290016256.00
+Mode(s): NA
+Variance: 20912431153806321107417444778947884613632.00
+Standard Deviation: 144611310601233121280.00
+=====================================
+Execution time: 0.0065 seconds
