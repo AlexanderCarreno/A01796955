@@ -122,27 +122,30 @@ def calculate_median(numbers):
 
 def calculate_mode(numbers):
     """
-    Calculate the mode(s) of numbers.
-
+    Simula la función MODA de Excel.
+    Devuelve la primera moda encontrada en la lista.
+    
     Args:
-        numbers (list): List of numbers
+        numbers (list): Lista de números
 
     Returns:
-        list: List of mode values
+        int/float/str: La moda encontrada, o "NA" si no existe
     """
-    # Count frequencies manually
+    # Contar frecuencias
     frequency_dict = {}
     for num in numbers:
-        if num in frequency_dict:
-            frequency_dict[num] += 1
-        else:
-            frequency_dict[num] = 1
+        frequency_dict[num] = frequency_dict.get(num, 0) + 1
 
     max_frequency = max(frequency_dict.values())
     modes = [num for num, freq in frequency_dict.items()
              if freq == max_frequency]
 
-    return sorted(modes)
+    # Si todos los números tienen la misma frecuencia → no hay moda
+    if len(modes) == len(frequency_dict):
+        return "NA"
+
+    # Devolver solo la primera moda encontrada (como hace Excel MODA)
+    return [modes[0]]
 
 
 def calculate_variance(numbers, mean):
@@ -174,21 +177,26 @@ def calculate_std_deviation(variance):
     return variance ** 0.5
 
 
-def format_results(stats_data):
+def format_results(filename, stats_data):
     """
     Format the statistical results for display.
 
     Args:
+        filename (str): The name of the input file
         stats_data (StatisticsData): Object containing all statistics data
 
     Returns:
         str: Formatted results string
     """
-    modes_str = ', '.join(f"{mode:.2f}" for mode in stats_data.modes)
+    # check if modes is "NA" or a list of numbers
+    if stats_data.modes == "NA":
+        modes_str = "NA"
+    else:
+        modes_str = ', '.join(f"{mode:.2f}" for mode in stats_data.modes)
 
     results = (
         "\n" + "=====================================" + "\n"
-        "DESCRIPTIVE STATISTICS RESULTS\n"
+        f"DESCRIPTIVE STATISTICS RESULTS for {filename}\n"
         "=====================================" + "\n"
         f"Number of items: {len(stats_data.numbers)}\n"
         f"Mean: {stats_data.mean:.2f}\n"
@@ -231,7 +239,7 @@ def main():
     stats_data = StatisticsData(numbers, mean, median, modes, variance, std_dev)
 
     # Format results
-    results = format_results(stats_data)
+    results = format_results(filename, stats_data)
     time_str = f"Execution time: {elapsed_time:.4f} seconds\n"
 
     # Display on console
@@ -240,7 +248,7 @@ def main():
 
     # Write to file
     try:
-        with open('./4.2/P1/results/StatisticsResults.txt', 'w', encoding='utf-8') as output_file:
+        with open('./4.2/P1/results/StatisticsResults.txt', 'a', encoding='utf-8') as output_file:
             output_file.write(results)
             output_file.write(time_str)
         print("Results saved to '/4.2/P1/results/StatisticsResults.txt'")
