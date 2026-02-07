@@ -33,12 +33,7 @@ def read_numbers_from_file(filename):
                 try:
                     # Convert to integer
                     num = int(line)
-                    if num < 0:
-                        invalid_count += 1
-                        print(f"Error: Line {line_num} contains negative "
-                              f"number: {num} (skipped)")
-                    else:
-                        numbers.append(num)
+                    numbers.append(num)
                 except ValueError:
                     invalid_count += 1
                     print(f"Error: Line {line_num} contains invalid data: "
@@ -52,32 +47,46 @@ def read_numbers_from_file(filename):
 
 def decimal_to_binary(num):
     """
-    Convert a decimal number to binary using basic algorithm.
+    Convert a decimal number to binary using two's complement for negative numbers.
+    
+    Uses 10-bit representation like Excel's DEC.A.BIN function, supporting
+    negative numbers in two's complement format.
 
     Args:
-        num (int): Decimal number to convert
+        num (int): Decimal number to convert (positive or negative)
 
     Returns:
         str: Binary representation of the number
     """
     if num == 0:
         return "0"
-
+    
+    # Handle negative numbers using two's complement (10-bit representation)
+    if num < 0:
+        # Convert to two's complement: 2^10 + num for 10-bit representation
+        # This matches Excel's DEC.A.BIN behavior
+        num = 1024 + num  # 1024 = 2^10
+    
+    # Convert positive number to binary
     binary = ""
-    while num > 0:
-        remainder = num % 2
+    temp = num
+    while temp > 0:
+        remainder = temp % 2
         binary = str(remainder) + binary
-        num = num // 2
+        temp = temp // 2
 
     return binary
 
 
 def decimal_to_hexadecimal(num):
     """
-    Convert a decimal number to hexadecimal using basic algorithm.
+    Convert a decimal number to hexadecimal using two's complement for negative numbers.
+    
+    Uses 10-digit hexadecimal representation like Excel's DEC.A.HEX function, supporting
+    negative numbers in two's complement format.
 
     Args:
-        num (int): Decimal number to convert
+        num (int): Decimal number to convert (positive or negative)
 
     Returns:
         str: Hexadecimal representation of the number
@@ -85,18 +94,26 @@ def decimal_to_hexadecimal(num):
     if num == 0:
         return "0"
 
+    # Handle negative numbers using two's complement (10-digit hex = 40-bit representation)
+    if num < 0:
+        # Convert to two's complement: 16^10 + num for 10-digit hex representation
+        # This matches Excel's DEC.A.HEX behavior
+        num = 1099511627776 + num  # 1099511627776 = 16^10
+    
+    # Convert positive number to hexadecimal
     hex_chars = "0123456789ABCDEF"
     hexadecimal = ""
+    temp = num
 
-    while num > 0:
-        remainder = num % 16
+    while temp > 0:
+        remainder = temp % 16
         hexadecimal = hex_chars[remainder] + hexadecimal
-        num = num // 16
+        temp = temp // 16
 
     return hexadecimal
 
 
-def process_and_display_conversions(numbers, output_file):
+def process_and_display_conversions(numbers, output_file, filename):
     """
     Convert numbers and display results.
 
@@ -107,6 +124,9 @@ def process_and_display_conversions(numbers, output_file):
     Returns:
         None
     """
+    output_file.write(f"\n\n=======================================================\n")
+    output_file.write(f"======= Convert Numbers for {filename} ==========\n")
+    output_file.write(f"=======================================================\n")
     output_file.write("Decimal | Binary | Hexadecimal\n")
     output_file.write("-" * 40 + "\n")
     print("Decimal | Binary | Hexadecimal")
@@ -141,9 +161,9 @@ def main():
 
     # Open output file for writing
     try:
-        with open("ConvertionResults.txt", 'w') as output_file:
+        with open("./4.2/P2/results/ConvertionResults.txt", 'a') as output_file:
             # Process and display conversions
-            process_and_display_conversions(numbers, output_file)
+            process_and_display_conversions(numbers, output_file, filename)
 
             # Calculate and display execution time
             end_time = time.time()
