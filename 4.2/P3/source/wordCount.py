@@ -1,3 +1,13 @@
+# pylint: disable=invalid-name
+"""
+wordCount.py
+
+Identify distinct words and count their frequency.
+
+This program reads a text file, counts the frequency of each distinct word
+using basic algorithms (not built-in functions for counting or sorting),
+and outputs the results to both the console and an output file.
+"""
 import sys
 import time
 
@@ -23,9 +33,6 @@ def read_file_words(filename):
         return []
     except IOError as e:
         print(f"Error: Unable to read file '{filename}': {e}")
-        return []
-    except Exception as e:
-        print(f"Error: Unexpected error while reading file: {e}")
         return []
 
     return words
@@ -81,7 +88,7 @@ def count_word_frequencies(words):
             if not found:
                 frequencies[word_lower] = 1
 
-        except Exception as e:
+        except (TypeError, AttributeError) as e:
             error_msg = f"Error processing word at position {i}: {e}"
             print(error_msg)
             errors.append(error_msg)
@@ -115,18 +122,19 @@ def sort_frequencies(frequencies):
     return items
 
 
-def write_results_to_file(filename, frequencies_sorted, elapsed_time):
+def write_results_to_file(filename, original_filename, frequencies_sorted, elapsed_time):
     """
     Write results to output file.
 
     Args:
         filename: Output filename
+        original_filename: Original input filename
         frequencies_sorted: Sorted list of (word, frequency) tuples
         elapsed_time: Time elapsed in seconds
     """
     try:
-        with open(filename, 'w', encoding='utf-8') as file:
-            file.write("WORD COUNT RESULTS\n")
+        with open(filename, 'a', encoding='utf-8') as file:
+            file.write(f"WORD COUNT RESULTS FOR FILE: {original_filename}\n")
             file.write("=" * 40 + "\n\n")
 
             file.write("Word Frequencies:\n")
@@ -137,12 +145,10 @@ def write_results_to_file(filename, frequencies_sorted, elapsed_time):
 
             file.write("\n" + "=" * 40 + "\n")
             file.write(f"Total unique words: {len(frequencies_sorted)}\n")
-            file.write(f"Execution time: {elapsed_time:.4f} seconds\n")
+            file.write(f"Execution time: {elapsed_time:.4f} seconds\n\n")
 
     except IOError as e:
         print(f"Error: Unable to write results to file: {e}")
-    except Exception as e:
-        print(f"Error: Unexpected error while writing results: {e}")
 
 
 def print_results(frequencies_sorted, elapsed_time):
@@ -189,7 +195,7 @@ def main():
         sys.exit(1)
 
     # Count word frequencies
-    frequencies, errors = count_word_frequencies(words)
+    frequencies, _ = count_word_frequencies(words)
 
     if not frequencies:
         print("No valid words found in file.")
@@ -205,10 +211,10 @@ def main():
     print_results(frequencies_sorted, elapsed_time)
 
     # Write results to file
-    output_filename = "WordCountResults.txt"
-    write_results_to_file(output_filename, frequencies_sorted, elapsed_time)
+    output_filename = "./4.2/P3/results/WordCountResults.txt"
+    write_results_to_file(output_filename, filename, frequencies_sorted, elapsed_time)
     print(f"Results saved to '{output_filename}'")
 
 
 if __name__ == '__main__':
-    main() 
+    main()
