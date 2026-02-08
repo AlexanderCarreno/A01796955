@@ -1,3 +1,4 @@
+# pylint: disable=invalid-name
 """
 Convert Numbers to Binary and Hexadecimal.
 
@@ -32,9 +33,10 @@ def read_numbers_from_file(filename):
 
                 try:
                     # Convert to integer
-                    num = int(line)
+                    num = int(line)  
                     numbers.append(num)
                 except ValueError:
+                    numbers.append(line)
                     invalid_count += 1
                     print(f"Error: Line {line_num} contains invalid data: "
                           f"'{line}' (skipped)")
@@ -120,6 +122,7 @@ def process_and_display_conversions(numbers, output_file, filename):
     Args:
         numbers (list): List of numbers to convert
         output_file (file object): File to write results to
+        filename (str): Name of the input file
 
     Returns:
         None
@@ -133,10 +136,18 @@ def process_and_display_conversions(numbers, output_file, filename):
     print("-" * 40)
 
     for num in numbers:
-        binary = decimal_to_binary(num)
-        hexadecimal = decimal_to_hexadecimal(num)
-
-        output_line = f"{num:7d} | {binary:>20s} | {hexadecimal:>12s}"
+        try:
+            # Try to convert to binary and hexadecimal
+            binary = decimal_to_binary(num)
+            hexadecimal = decimal_to_hexadecimal(num)
+        except (TypeError, ValueError):
+            # If conversion fails, display NA
+            binary = "NA"
+            hexadecimal = "NA"
+        if type(num) == str:
+            output_line = f"{num:>7s} | {binary:>20s} | {hexadecimal:>12s}"
+        else:
+            output_line = f"{num:7d} | {binary:>20s} | {hexadecimal:>12s}"
         print(output_line)
         output_file.write(output_line + "\n")
 
