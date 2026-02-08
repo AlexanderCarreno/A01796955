@@ -121,9 +121,29 @@ def sort_frequencies(frequencies):
 
     return items
 
-
-def write_results_to_file(filename, original_filename, frequencies_sorted, elapsed_time):
+# Count how many words has the list
+def count_total_words(frequencies):
     """
+    Count total number of words from frequencies.
+
+    Args:
+        words: List of words to count
+
+    Returns:
+        Total count of words
+    """
+    total = 0
+    for _ in frequencies:
+        total += 1
+    return total
+
+def write_results_to_file(
+        filename,
+        original_filename,
+        frequencies_sorted,
+        elapsed_time,
+        count_total):
+    """""
     Write results to output file.
 
     Args:
@@ -144,6 +164,7 @@ def write_results_to_file(filename, original_filename, frequencies_sorted, elaps
                 file.write(f"{word}: {count}\n")
 
             file.write("\n" + "=" * 40 + "\n")
+            file.write(f"Total words: {count_total}\n")
             file.write(f"Total unique words: {len(frequencies_sorted)}\n")
             file.write(f"Execution time: {elapsed_time:.4f} seconds\n\n")
 
@@ -151,7 +172,7 @@ def write_results_to_file(filename, original_filename, frequencies_sorted, elaps
         print(f"Error: Unable to write results to file: {e}")
 
 
-def print_results(frequencies_sorted, elapsed_time):
+def print_results(frequencies_sorted, elapsed_time, count_total):
     """
     Print results to console.
 
@@ -170,6 +191,7 @@ def print_results(frequencies_sorted, elapsed_time):
         print(f"{word}: {count}")
 
     print("\n" + "=" * 40)
+    print(f"Total words: {count_total}")
     print(f"Total unique words: {len(frequencies_sorted)}")
     print(f"Execution time: {elapsed_time:.4f} seconds")
     print("=" * 40 + "\n")
@@ -196,6 +218,7 @@ def main():
 
     # Count word frequencies
     frequencies, _ = count_word_frequencies(words)
+    count_total = count_total_words(words)
 
     if not frequencies:
         print("No valid words found in file.")
@@ -208,11 +231,11 @@ def main():
     elapsed_time = time.time() - start_time
 
     # Print results to console
-    print_results(frequencies_sorted, elapsed_time)
+    print_results(frequencies_sorted, elapsed_time, count_total)
 
     # Write results to file
     output_filename = "./4.2/P3/results/WordCountResults.txt"
-    write_results_to_file(output_filename, filename, frequencies_sorted, elapsed_time)
+    write_results_to_file(output_filename, filename, frequencies_sorted, elapsed_time, count_total)
     print(f"Results saved to '{output_filename}'")
 
 
