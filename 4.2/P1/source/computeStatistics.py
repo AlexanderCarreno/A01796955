@@ -18,25 +18,84 @@ import time
 
 
 class StatisticsData:
-    """Data class to hold statistics calculation parameters."""
+    """Object that stores numbers and computes descriptive statistics.
 
-    def __init__(self, numbers, mean, median, modes, variance, std_dev):
-        """Initialize statistics data.
+    The object is initialized with the list of numbers and exposes methods
+    to compute mean, median, mode, variance and standard deviation. A
+    convenience method `compute_all()` runs computations in the correct order
+    and stores results as attributes on the instance.
+    """
+
+    def __init__(self, numbers):
+        """Initialize with the list of numbers.
 
         Args:
-            numbers (list): List of numbers
-            mean (float): The mean value
-            median (float): The median value
-            modes (list): List of mode values
-            variance (float): The variance value
-            std_dev (float): The standard deviation value
+            numbers (list): List of numeric values
         """
         self.numbers = numbers
-        self.mean = mean
-        self.median = median
-        self.modes = modes
-        self.variance = variance
-        self.std_dev = std_dev
+        self.mean = None
+        self.median = None
+        self.modes = None
+        self.variance = None
+        self.std_dev = None
+
+    def calculate_mean(self):
+        """Calculate and store the mean (average)."""
+        self.mean = sum(self.numbers) / len(self.numbers)
+        return self.mean
+
+    def calculate_median(self):
+        """Calculate and store the median."""
+        sorted_nums = sorted(self.numbers)
+        n = len(sorted_nums)
+        if n % 2 == 1:
+            self.median = sorted_nums[n // 2]
+        else:
+            self.median = (sorted_nums[n // 2 - 1] + sorted_nums[n // 2]) / 2
+        return self.median
+
+    def calculate_mode(self):
+        """Calculate and store the mode(s). Returns 'NA' if none."""
+        frequency_dict = {}
+        for num in self.numbers:
+            frequency_dict[num] = frequency_dict.get(num, 0) + 1
+
+        max_frequency = max(frequency_dict.values())
+        modes = [num for num, freq in frequency_dict.items() if freq == max_frequency]
+
+        # If every value has the same frequency, there is no mode
+        if len(modes) == len(frequency_dict):
+            self.modes = "NA"
+        else:
+            # Match previous behavior: return only the first mode in a list
+            self.modes = [modes[0]]
+
+        return self.modes
+
+    def calculate_variance(self):
+        """Calculate and store the (sample) variance."""
+        # recompute mean to be safe
+        self.mean = sum(self.numbers) / len(self.numbers)
+        squared_diffs = [(x - self.mean) ** 2 for x in self.numbers]
+        # sample variance (n-1)
+        self.variance = sum(squared_diffs) / (len(self.numbers) - 1)
+        return self.variance
+
+    def calculate_std_deviation(self):
+        """Calculate and store the standard deviation from variance."""
+        if self.variance is None:
+            self.calculate_variance()
+        self.std_dev = self.variance ** 0.5
+        return self.std_dev
+
+    def compute_all(self):
+        """Compute mean, median, mode, variance and std deviation in order."""
+        self.calculate_mean()
+        self.calculate_median()
+        self.calculate_mode()
+        self.calculate_variance()
+        self.calculate_std_deviation()
+        return self
 
 
 def read_numbers_from_file(filename):
@@ -85,96 +144,7 @@ def read_numbers_from_file(filename):
     return numbers
 
 
-def calculate_mean(numbers):
-    """
-    Calculate the mean (average) of numbers.
 
-    Args:
-        numbers (list): List of numbers
-
-    Returns:
-        float: The mean value
-    """
-    return sum(numbers) / len(numbers)
-
-
-def calculate_median(numbers):
-    """
-    Calculate the median of numbers.
-
-    Args:
-        numbers (list): List of numbers
-
-    Returns:
-        float: The median value
-    """
-    # Sort numbers using bubble sort (basic algorithm)
-    sorted_nums = sorted(numbers)
-    n = len(sorted_nums)
-
-    if n % 2 == 1:
-        median = sorted_nums[n // 2]
-    else:
-        median = (sorted_nums[n // 2 - 1] + sorted_nums[n // 2]) / 2
-
-    return median
-
-
-def calculate_mode(numbers):
-    """
-    Simula la función MODA de Excel.
-    Devuelve la primera moda encontrada en la lista.
-    
-    Args:
-        numbers (list): Lista de números
-
-    Returns:
-        int/float/str: La moda encontrada, o "NA" si no existe
-    """
-    # Contar frecuencias
-    frequency_dict = {}
-    for num in numbers:
-        frequency_dict[num] = frequency_dict.get(num, 0) + 1
-
-    max_frequency = max(frequency_dict.values())
-    modes = [num for num, freq in frequency_dict.items()
-             if freq == max_frequency]
-
-    # Si todos los números tienen la misma frecuencia → no hay moda
-    if len(modes) == len(frequency_dict):
-        return "NA"
-
-    # Devolver solo la primera moda encontrada (como hace Excel MODA)
-    return [modes[0]]
-
-
-def calculate_variance(numbers, mean):
-    """
-    Calculate the variance of numbers.
-
-    Args:
-        numbers (list): List of numbers
-        mean (float): The mean of the numbers
-
-    Returns:
-        float: The variance value
-    """
-    mean = sum(numbers) / len(numbers)
-    squared_diffs = [(x - mean) ** 2 for x in numbers]
-    return sum(squared_diffs) / (len(numbers) - 1)
-
-
-def calculate_std_deviation(variance):
-    """
-    Calculate the standard deviation from variance.
-
-    Args:
-        variance (float): The variance value
-
-    Returns:
-        float: The standard deviation value
-    """
-    return variance ** 0.5
 
 
 def format_results(filename, stats_data):
@@ -224,19 +194,13 @@ def main():
     # Read numbers from file
     numbers = read_numbers_from_file(filename)
 
-    # Calculate statistics
-    mean = calculate_mean(numbers)
-    median = calculate_median(numbers)
-    modes = calculate_mode(numbers)
-    variance = calculate_variance(numbers, mean)
-    std_dev = calculate_std_deviation(variance)
+    # Create statistics data object and compute all stats
+    stats_data = StatisticsData(numbers)
+    stats_data.compute_all()
 
     # Calculate execution time
     end_time = time.time()
     elapsed_time = end_time - start_time
-
-    # Create statistics data object
-    stats_data = StatisticsData(numbers, mean, median, modes, variance, std_dev)
 
     # Format results
     results = format_results(filename, stats_data)
