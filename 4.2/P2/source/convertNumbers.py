@@ -25,7 +25,7 @@ def read_numbers_from_file(filename):
     invalid_count = 0
 
     try:
-        with open(filename, 'r') as file:
+        with open(filename, 'r', encoding='utf-8') as file:
             for line_num, line in enumerate(file, 1):
                 line = line.strip()
                 if not line or line.startswith('#'):
@@ -33,7 +33,7 @@ def read_numbers_from_file(filename):
 
                 try:
                     # Convert to integer
-                    num = int(line)  
+                    num = int(line)
                     numbers.append(num)
                 except ValueError:
                     numbers.append(line)
@@ -50,7 +50,7 @@ def read_numbers_from_file(filename):
 def decimal_to_binary(num):
     """
     Convert a decimal number to binary using two's complement for negative numbers.
-    
+
     Uses 10-bit representation like Excel's DEC.A.BIN function, supporting
     negative numbers in two's complement format.
 
@@ -62,13 +62,12 @@ def decimal_to_binary(num):
     """
     if num == 0:
         return "0"
-    
+
     # Handle negative numbers using two's complement (10-bit representation)
     if num < 0:
         # Convert to two's complement: 2^10 + num for 10-bit representation
         # This matches Excel's DEC.A.BIN behavior
-        num = 1024 + num  # 1024 = 2^10
-    
+        num = 1024 + num # 1024 = 2^10
     # Convert positive number to binary
     binary = ""
     temp = num
@@ -83,7 +82,7 @@ def decimal_to_binary(num):
 def decimal_to_hexadecimal(num):
     """
     Convert a decimal number to hexadecimal using two's complement for negative numbers.
-    
+
     Uses 10-digit hexadecimal representation like Excel's DEC.A.HEX function, supporting
     negative numbers in two's complement format.
 
@@ -100,8 +99,7 @@ def decimal_to_hexadecimal(num):
     if num < 0:
         # Convert to two's complement: 16^10 + num for 10-digit hex representation
         # This matches Excel's DEC.A.HEX behavior
-        num = 1099511627776 + num  # 1099511627776 = 16^10
-    
+        num = 1099511627776 + num # 1099511627776 = 16^10
     # Convert positive number to hexadecimal
     hex_chars = "0123456789ABCDEF"
     hexadecimal = ""
@@ -127,9 +125,7 @@ def process_and_display_conversions(numbers, output_file, filename):
     Returns:
         None
     """
-    output_file.write(f"\n\n=======================================================\n")
     output_file.write(f"======= Convert Numbers for {filename} ==========\n")
-    output_file.write(f"=======================================================\n")
     output_file.write("Decimal | Binary | Hexadecimal\n")
     output_file.write("-" * 40 + "\n")
     print("Decimal | Binary | Hexadecimal")
@@ -144,7 +140,7 @@ def process_and_display_conversions(numbers, output_file, filename):
             # If conversion fails, display NA
             binary = "NA"
             hexadecimal = "NA"
-        if type(num) == str:
+        if isinstance(num, str):
             output_line = f"{num:>7s} | {binary:>20s} | {hexadecimal:>12s}"
         else:
             output_line = f"{num:7d} | {binary:>20s} | {hexadecimal:>12s}"
@@ -172,7 +168,8 @@ def main():
 
     # Open output file for writing
     try:
-        with open("./4.2/P2/results/ConvertionResults.txt", 'a') as output_file:
+        with open("./4.2/P2/results/ConvertionResults.txt", 'a',
+                  encoding='utf-8') as output_file:
             # Process and display conversions
             process_and_display_conversions(numbers, output_file, filename)
 
