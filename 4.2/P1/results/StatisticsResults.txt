@@ -1,3 +1,4 @@
+
 =====================================
 DESCRIPTIVE STATISTICS RESULTS for .\4.2\P1\tests\TC1.txt
 =====================================
@@ -8,7 +9,7 @@ Mode(s): 393.00
 Variance: 21152.80
 Standard Deviation: 145.44
 =====================================
-Execution time: 0.0010 seconds
+Execution time: 0.0085 seconds
 
 =====================================
 DESCRIPTIVE STATISTICS RESULTS for .\4.2\P1\tests\TC2.txt
@@ -20,7 +21,7 @@ Mode(s): 230.00
 Variance: 20795.89
 Standard Deviation: 144.21
 =====================================
-Execution time: 0.0005 seconds
+Execution time: 0.0090 seconds
 
 =====================================
 DESCRIPTIVE STATISTICS RESULTS for .\4.2\P1\tests\TC3.txt
@@ -32,7 +33,7 @@ Mode(s): 94.00
 Variance: 21118.95
 Standard Deviation: 145.32
 =====================================
-Execution time: 0.0040 seconds
+Execution time: 0.0130 seconds
 
 =====================================
 DESCRIPTIVE STATISTICS RESULTS for .\4.2\P1\tests\TC4.txt
@@ -44,7 +45,7 @@ Mode(s): 123.75
 Variance: 17009.27
 Standard Deviation: 130.42
 =====================================
-Execution time: 0.0050 seconds
+Execution time: 0.0134 seconds
 
 =====================================
 DESCRIPTIVE STATISTICS RESULTS for .\4.2\P1\tests\TC5.txt
@@ -56,7 +57,7 @@ Mode(s): 393.00
 Variance: 21229.17
 Standard Deviation: 145.70
 =====================================
-Execution time: 0.0000 seconds
+Execution time: 0.0085 seconds
 
 =====================================
 DESCRIPTIVE STATISTICS RESULTS for .\4.2\P1\tests\TC6.txt
@@ -68,7 +69,7 @@ Mode(s): NA
 Variance: 11534749616069338239761958751339425038336.00
 Standard Deviation: 107399951657667608576.00
 =====================================
-Execution time: 0.0010 seconds
+Execution time: 0.0085 seconds
 
 =====================================
 DESCRIPTIVE STATISTICS RESULTS for .\4.2\P1\tests\TC7.txt
@@ -80,4 +81,4 @@ Mode(s): NA
 Variance: 20912431153806321107417444778947884613632.00
 Standard Deviation: 144611310601233121280.00
 =====================================
-Execution time: 0.0065 seconds
+Execution time: 0.0163 seconds
