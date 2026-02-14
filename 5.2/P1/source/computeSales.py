@@ -134,8 +134,7 @@ def compute_sales_total(sales_data, price_map):
                 if qty_value < 0:
                     print(f"Warning: Negative quantity {qty_value} for "
                           f"product '{product}' (Sale {sale_id}).")
-                    error_count += 1
-                    continue
+                    # Allow negative quantities to subtract from total_cost
 
                 price = price_map[product]
                 item_cost = price * qty_value
@@ -164,7 +163,7 @@ def compute_sales_total(sales_data, price_map):
     return total_cost, sales_details, error_count
 
 
-def format_results(total_cost, sales_details, execution_time, error_count):
+def format_results(sales_record_file, total_cost, sales_details, execution_time, error_count):
     """
     Format results as a human-readable string.
 
@@ -179,7 +178,7 @@ def format_results(total_cost, sales_details, execution_time, error_count):
     """
     lines = []
     lines.append("=" * 70)
-    lines.append("SALES COMPUTATION RESULTS")
+    lines.append("SALES COMPUTATION RESULTS FOR FILE: " + sales_record_file)
     lines.append("=" * 70)
     lines.append("")
 
@@ -248,8 +247,8 @@ def main():
     execution_time = time.time() - start_time
 
     # Format results
-    results = format_results(total_cost, sales_details, execution_time,
-                             error_count)
+    results = format_results(sales_record_file, total_cost, sales_details, 
+                             execution_time, error_count)
 
     # Display results to console
     print("")
