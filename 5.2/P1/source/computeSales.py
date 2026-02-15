@@ -75,7 +75,7 @@ def build_price_catalogue(catalogue_data):
                 print(f"Warning: Invalid price '{price}' for product '{title}'.")
                 continue
 
-        except Exception as e:
+        except (KeyError, TypeError, ValueError) as e:
             print(f"Warning: Error processing product at index {idx}: {e}")
             continue
 
@@ -155,7 +155,7 @@ def compute_sales_total(sales_data, price_map):
                 error_count += 1
                 continue
 
-        except Exception as e:
+        except (KeyError, TypeError, ValueError) as e:
             print(f"Warning: Error processing sale at index {idx}: {e}")
             error_count += 1
             continue
@@ -247,7 +247,7 @@ def main():
     execution_time = time.time() - start_time
 
     # Format results
-    results = format_results(sales_record_file, total_cost, sales_details, 
+    results = format_results(sales_record_file, total_cost, sales_details,
                              execution_time, error_count)
 
     # Display results to console
