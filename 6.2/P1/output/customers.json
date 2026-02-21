@@ -1,0 +1,16 @@
+[
+  {
+    "customer_id": "C001",
+    "name": "John Smith",
+    "email": "john@example.com",
+    "phone": "555-1001",
+    "created_date": "2026-02-20T18:22:47.367056"
+  },
+  {
+    "customer_id": "C002",
+    "name": "Maria Garcia",
+    "email": "maria@example.com",
+    "phone": "555-1002",
+    "created_date": "2026-02-20T18:22:47.367056"
+  }
+]

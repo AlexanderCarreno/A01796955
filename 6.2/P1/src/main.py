@@ -1,0 +1,81 @@
+"""Main entry point for Hotel Management System (src package)."""
+
+import os
+import sys
+from hotel_system import Hotel, Customer, Reservation
+from persistence import DataPersistence
+
+
+def print_header(title: str) -> None:
+    print("\n" + "=" * 70)
+    print(f"  {title}")
+    print("=" * 70)
+
+
+def demo_hotels(persistence: DataPersistence) -> None:
+    print_header("Hotel Management Demo")
+    h1 = Hotel("H001", "Grand Plaza Hotel", "New York", 100, 100, 150.0)
+    h2 = Hotel("H002", "Beach Resort", "Miami", 50, 50, 200.0)
+    persistence.create_hotel(h1)
+    persistence.create_hotel(h2)
+    hotel = persistence.get_hotel("H001")
+    if hotel:
+        print(f"✓ Retrieved: {hotel}")
+    for hotel_obj in persistence.get_all_hotels():
+        print(f"  - {hotel_obj}")
+
+
+def demo_customers(persistence: DataPersistence) -> None:
+    print_header("Customer Management Demo")
+    c1 = Customer("C001", "John Smith", "john@example.com", "555-1001")
+    c2 = Customer("C002", "Maria Garcia", "maria@example.com", "555-1002")
+    persistence.create_customer(c1)
+    persistence.create_customer(c2)
+    customer = persistence.get_customer("C001")
+    if customer:
+        print(f"✓ Retrieved: {customer}")
+
+
+def demo_reservations(persistence: DataPersistence) -> None:
+    print_header("Reservation Management Demo")
+    r1 = Reservation("R001", "C001", "H001", "2026-03-01", "2026-03-05")
+    r2 = Reservation("R002", "C002", "H002", "2026-03-10", "2026-03-15")
+    persistence.create_reservation(r1)
+    persistence.create_reservation(r2)
+    for res_obj in persistence.get_all_reservations():
+        print(f"  - {res_obj}")
+
+
+def demo_error_handling() -> None:
+    print_header("Error Handling Demo")
+    invalid_customer = Customer("C999", "No Email", "invalid-email", "555-0000")
+    if not invalid_customer.validate():
+        print("✓ Invalid email detected - validation failed")
+
+
+def main() -> None:
+    print("\n" + "=" * 70)
+    print("  HOTEL MANAGEMENT SYSTEM - DEMONSTRATION")
+    print("=" * 70)
+
+    # Default output directory at project root
+    base = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    data_dir = os.path.join(base, 'output')
+    persistence = DataPersistence(data_dir)
+
+    try:
+        persistence.clear_all_data()
+        demo_hotels(persistence)
+        demo_customers(persistence)
+        demo_reservations(persistence)
+        demo_error_handling()
+        print("\n" + "=" * 70)
+        print("  DEMONSTRATION COMPLETED SUCCESSFULLY")
+        print("=" * 70 + "\n")
+    except Exception as e:
+        print(f"\nError during demonstration: {str(e)}")
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
