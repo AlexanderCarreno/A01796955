@@ -21,13 +21,16 @@ class DataPersistence:
         If `data_dir` is None, use the project's `output/` directory.
         """
         if data_dir is None:
-            base = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+            base = os.path.abspath(
+                os.path.join(os.path.dirname(__file__), '..'))
             data_dir = os.path.join(base, 'output')
 
         self.data_dir = data_dir
         self.hotels_file = os.path.join(self.data_dir, "hotels.json")
-        self.customers_file = os.path.join(self.data_dir, "customers.json")
-        self.reservations_file = os.path.join(self.data_dir, "reservations.json")
+        self.customers_file = os.path.join(
+            self.data_dir, "customers.json")
+        self.reservations_file = os.path.join(
+            self.data_dir, "reservations.json")
 
         self._ensure_directory()
         self._ensure_files()
@@ -40,9 +43,12 @@ class DataPersistence:
     def _ensure_files(self) -> None:
         """Create empty JSON files for hotels, customers and reservations.
 
-        Creates files with an empty list if they do not already exist.
+        Creates files with an empty list.
         """
-        for file_path in [self.hotels_file, self.customers_file, self.reservations_file]:
+        for file_path in [
+                self.hotels_file,
+                self.customers_file,
+                self.reservations_file]:
             if not os.path.exists(file_path):
                 self._write_json_file(file_path, [])
 
@@ -62,7 +68,10 @@ class DataPersistence:
             print(f"Unexpected error reading {file_path}: {str(e)}")
             return []
 
-    def _write_json_file(self, file_path: str, data: List[Dict[str, Any]]) -> bool:
+    def _write_json_file(
+            self,
+            file_path: str,
+            data: List[Dict[str, Any]]) -> bool:
         """Write a list of dictionaries to a JSON file.
 
         Returns True on success, False on error.
@@ -88,7 +97,10 @@ class DataPersistence:
         hotels = self._read_json_file(self.hotels_file)
         for h in hotels:
             if h.get('hotel_id') == hotel.hotel_id:
-                print(f"Error: Hotel with ID {hotel.hotel_id} already exists")
+                print(
+                    f"Error: Hotel with ID {hotel.hotel_id} "
+                    "already exists"
+                )
                 return False
         hotels.append(hotel.to_dict())
         return self._write_json_file(self.hotels_file, hotels)
@@ -101,8 +113,10 @@ class DataPersistence:
                 try:
                     return Hotel.from_dict(hotel_data)
                 except (KeyError, TypeError, ValueError) as e:
-                    print(f"Error creating Hotel from data: {str(e)}")
-                    continue
+                    print(
+                        f"Error creating Hotel from data: {str(e)}"
+                    )
+                continue
         return None
 
     def get_all_hotels(self) -> List[Hotel]:
@@ -115,7 +129,9 @@ class DataPersistence:
                 if hotel.validate():
                     hotel_list.append(hotel)
             except (KeyError, TypeError, ValueError) as e:
-                print(f"Error creating Hotel from data: {str(e)}")
+                print(
+                    f"Error creating Hotel from data: {str(e)}"
+                )
                 continue
         return hotel_list
 
@@ -153,7 +169,10 @@ class DataPersistence:
         customers = self._read_json_file(self.customers_file)
         for c in customers:
             if c.get('customer_id') == customer.customer_id:
-                print(f"Error: Customer with ID {customer.customer_id} already exists")
+                print(
+                    f"Error: Customer with ID {customer.customer_id} "
+                    "already exists"
+                )
                 return False
         customers.append(customer.to_dict())
         return self._write_json_file(self.customers_file, customers)
@@ -166,12 +185,14 @@ class DataPersistence:
                 try:
                     return Customer.from_dict(customer_data)
                 except (KeyError, TypeError, ValueError) as e:
-                    print(f"Error creating Customer from data: {str(e)}")
+                    print(
+                        f"Error creating Customer from data: {str(e)}"
+                    )
                     continue
         return None
 
     def get_all_customers(self) -> List[Customer]:
-        """Return all valid `Customer` instances stored in the customers file."""
+        """Return all valid `Customer` instances stored in customers file."""
         customers = self._read_json_file(self.customers_file)
         customer_list: List[Customer] = []
         for customer_data in customers:
@@ -180,7 +201,9 @@ class DataPersistence:
                 if customer.validate():
                     customer_list.append(customer)
             except (KeyError, TypeError, ValueError) as e:
-                print(f"Error creating Customer from data: {str(e)}")
+                print(
+                    f"Error creating Customer from data: {str(e)}"
+                )
                 continue
         return customer_list
 
@@ -204,7 +227,10 @@ class DataPersistence:
         """Delete a customer by `customer_id`. Returns True if deleted."""
         customers = self._read_json_file(self.customers_file)
         initial_length = len(customers)
-        customers = [c for c in customers if c.get('customer_id') != customer_id]
+        customers = [
+            c for c in customers
+            if c.get('customer_id') != customer_id
+        ]
         if len(customers) < initial_length:
             return self._write_json_file(self.customers_file, customers)
         print(f"Error: Customer with ID {customer_id} not found")
@@ -219,25 +245,30 @@ class DataPersistence:
         reservations = self._read_json_file(self.reservations_file)
         for r in reservations:
             if r.get('reservation_id') == reservation.reservation_id:
-                print(f"Error: Reservation with ID {reservation.reservation_id} already exists")
+                print(
+                    f"Error: Reservation with ID {reservation.reservation_id} "
+                    "already exists"
+                )
                 return False
         reservations.append(reservation.to_dict())
         return self._write_json_file(self.reservations_file, reservations)
 
     def get_reservation(self, reservation_id: str) -> Optional[Reservation]:
-        """Retrieve a `Reservation` by `reservation_id`, or None if not found."""
+        """Retrieve a `Reservation` by `reservation_id` if not found."""
         reservations = self._read_json_file(self.reservations_file)
         for res_data in reservations:
             if res_data.get('reservation_id') == reservation_id:
                 try:
                     return Reservation.from_dict(res_data)
                 except (KeyError, TypeError, ValueError) as e:
-                    print(f"Error creating Reservation from data: {str(e)}")
+                    print(
+                        f"Error creating Reservation from data: {str(e)}"
+                    )
                     continue
         return None
 
     def get_all_reservations(self) -> List[Reservation]:
-        """Return all valid `Reservation` instances stored in the reservations file."""
+        """Return all valid `Reservation` instances stored in reservations."""
         reservations = self._read_json_file(self.reservations_file)
         res_list: List[Reservation] = []
         for res_data in reservations:
@@ -246,12 +277,17 @@ class DataPersistence:
                 if reservation.validate():
                     res_list.append(reservation)
             except (KeyError, TypeError, ValueError) as e:
-                print(f"Error creating Reservation from data: {str(e)}")
+                print(
+                    f"Error creating Reservation from data: {str(e)}"
+                )
                 continue
         return res_list
 
-    def update_reservation(self, reservation_id: str, reservation: Reservation) -> bool:
-        """Update a reservation record by ID. Returns True on success."""
+    def update_reservation(
+            self,
+            reservation_id: str,
+            reservation: Reservation) -> bool:
+        """Update a reservation by ID. Returns True if ok."""
         if not reservation.validate():
             print("Error: Invalid reservation data")
             return False
@@ -259,15 +295,19 @@ class DataPersistence:
         for i, r in enumerate(reservations):
             if r.get('reservation_id') == reservation_id:
                 reservations[i] = reservation.to_dict()
-                return self._write_json_file(self.reservations_file, reservations)
+                return self._write_json_file(
+                    self.reservations_file, reservations)
         print(f"Error: Reservation with ID {reservation_id} not found")
         return False
 
     def delete_reservation(self, reservation_id: str) -> bool:
-        """Delete a reservation by `reservation_id`. Returns True if deleted."""
+        """Delete a reservation by `reservation_id`. Returns True if ok."""
         reservations = self._read_json_file(self.reservations_file)
         initial_length = len(reservations)
-        reservations = [r for r in reservations if r.get('reservation_id') != reservation_id]
+        reservations = [
+            r for r in reservations
+            if r.get('reservation_id') != reservation_id
+        ]
         if len(reservations) < initial_length:
             return self._write_json_file(self.reservations_file, reservations)
         print(f"Error: Reservation with ID {reservation_id} not found")
@@ -278,17 +318,23 @@ class DataPersistence:
         reservations = self._read_json_file(self.reservations_file)
         res_list: List[Reservation] = []
         for res_data in reservations:
-            if res_data.get('hotel_id') == hotel_id and res_data.get('status') == 'active':
+            if (
+                res_data.get('hotel_id') == hotel_id
+                and res_data.get('status') == 'active'
+            ):
                 try:
                     reservation = Reservation.from_dict(res_data)
                     if reservation.validate():
                         res_list.append(reservation)
                 except (KeyError, TypeError, ValueError) as e:
-                    print(f"Error creating Reservation from data: {str(e)}")
+                    print(
+                        f"Error creating Reservation from data: {str(e)}"
+                    )
                     continue
         return res_list
 
-    def get_reservations_by_customer(self, customer_id: str) -> List[Reservation]:
+    def get_reservations_by_customer(
+            self, customer_id: str) -> List[Reservation]:
         """Return all reservations for a given customer ID."""
         reservations = self._read_json_file(self.reservations_file)
         res_list: List[Reservation] = []
@@ -299,7 +345,9 @@ class DataPersistence:
                     if reservation.validate():
                         res_list.append(reservation)
                 except (KeyError, TypeError, ValueError) as e:
-                    print(f"Error creating Reservation from data: {str(e)}")
+                    print(
+                        f"Error creating Reservation from data: {str(e)}"
+                    )
                     continue
         return res_list
 

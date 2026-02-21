@@ -1,3 +1,4 @@
+# pylint: disable=too-many-arguments, too-many-positional-arguments
 """Hotel Management System - Classes for Hotel, Customer, and Reservation."""
 
 from datetime import datetime
@@ -19,7 +20,7 @@ class BaseEntity(ABC):
 
 class Hotel(BaseEntity):
     """Hotel class representing a hotel with rooms and reservations."""
-    def __init__(self, # pylint: disable=too-many-arguments, too-many-positional-arguments
+    def __init__(self,
                  hotel_id: str,
                  name: str,
                  location: str,
@@ -41,7 +42,11 @@ class Hotel(BaseEntity):
         self.name = name
         self.location = location
         self.total_rooms = total_rooms
-        self.rooms_available = rooms_available if rooms_available is not None else total_rooms
+        self.rooms_available = (
+            rooms_available
+            if rooms_available is not None
+            else total_rooms
+        )
         self.price_per_room = price_per_room
         self.created_date = datetime.now().isoformat()
 
@@ -51,13 +56,18 @@ class Hotel(BaseEntity):
 
     def _validate_room_counts(self) -> bool:
         """Validate room count consistency."""
-        rooms_valid = (isinstance(self.total_rooms, int) and self.total_rooms > 0 and
-                       isinstance(self.rooms_available, int) and self.rooms_available >= 0)
+        rooms_valid = (isinstance(self.total_rooms, int)
+                       and self.total_rooms > 0
+                       and isinstance(self.rooms_available, int)
+                       and self.rooms_available >= 0)
         return rooms_valid and self.rooms_available <= self.total_rooms
 
     def _validate_price(self) -> bool:
         """Validate price field."""
-        return isinstance(self.price_per_room, (int, float)) and self.price_per_room >= 0
+        return (
+            isinstance(self.price_per_room, (int, float))
+            and self.price_per_room >= 0
+        )
 
     def validate(self) -> bool:
         """Validate hotel data fields.
@@ -65,11 +75,13 @@ class Hotel(BaseEntity):
         Returns True when all required fields have acceptable types and
         values; otherwise returns False.
         """
-        return (self._validate_string_field('hotel_id', self.hotel_id) and
-                self._validate_string_field('name', self.name) and
-                self._validate_string_field('location', self.location) and
-                self._validate_room_counts() and
-                self._validate_price())
+        return (
+            self._validate_string_field('hotel_id', self.hotel_id)
+            and self._validate_string_field('name', self.name)
+            and self._validate_string_field('location', self.location)
+            and self._validate_room_counts()
+            and self._validate_price()
+        )
 
     def to_dict(self) -> Dict[str, Any]:
         """Serialize the Hotel to a JSON-serializable dict."""
@@ -85,7 +97,7 @@ class Hotel(BaseEntity):
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'Hotel':
-        """Create a `Hotel` instance from a dictionary (typically parsed JSON)."""
+        """Create a `Hotel` instance from a dictionary (JSON)."""
         return cls(
             hotel_id=data['hotel_id'],
             name=data['name'],
@@ -144,10 +156,12 @@ class Hotel(BaseEntity):
 
     def __str__(self) -> str:
         """Return a concise human-readable representation of the hotel."""
-        return (f"Hotel(ID: {self.hotel_id}, Name: {self.name}, "
+        return (
+            f"Hotel(ID: {self.hotel_id}, Name: {self.name}, "
             f"Location: {self.location}, "
             f"Rooms: {self.rooms_available}/{self.total_rooms}, "
-            f"Price: ${self.price_per_room})")
+            f"Price: ${self.price_per_room})"
+        )
 
     def __eq__(self, other: object) -> bool:
         """Equality comparison based on `hotel_id`."""
@@ -230,8 +244,10 @@ class Customer(BaseEntity):
 
     def __str__(self) -> str:
         """Return a readable representation of the customer."""
-        return (f"Customer(ID: {self.customer_id}, Name: {self.name}, "
-            f"Email: {self.email}, Phone: {self.phone})")
+        return (
+            f"Customer(ID: {self.customer_id}, Name: {self.name}, "
+            f"Email: {self.email}, Phone: {self.phone})"
+        )
 
     def __eq__(self, other: object) -> bool:
         """Equality comparison based on `customer_id`."""
@@ -242,7 +258,7 @@ class Customer(BaseEntity):
 
 class Reservation(BaseEntity):
     """Reservation class representing a hotel reservation."""
-    def __init__(self, # pylint: disable=too-many-arguments, too-many-positional-arguments
+    def __init__(self,
                  reservation_id: str,
                  customer_id: str,
                  hotel_id: str,
@@ -269,11 +285,13 @@ class Reservation(BaseEntity):
 
     def _validate_string_fields(self) -> bool:
         """Validate all required string fields."""
-        return (bool(self.reservation_id and isinstance(self.reservation_id, str)) and
-                bool(self.customer_id and isinstance(self.customer_id, str)) and
-                bool(self.hotel_id and isinstance(self.hotel_id, str)) and
-                bool(self.check_in and isinstance(self.check_in, str)) and
-                bool(self.check_out and isinstance(self.check_out, str)))
+        return all([
+            bool(self.reservation_id and isinstance(self.reservation_id, str)),
+            bool(self.customer_id and isinstance(self.customer_id, str)),
+            bool(self.hotel_id and isinstance(self.hotel_id, str)),
+            bool(self.check_in and isinstance(self.check_in, str)),
+            bool(self.check_out and isinstance(self.check_out, str)),
+        ])
 
     def _validate_dates(self) -> bool:
         """Validate date format and ordering."""
@@ -332,10 +350,12 @@ class Reservation(BaseEntity):
 
     def __str__(self) -> str:
         """Return a readable representation of the reservation."""
-        return (f"Reservation(ID: {self.reservation_id}, "
+        return (
+            f"Reservation(ID: {self.reservation_id}, "
             f"Customer: {self.customer_id}, Hotel: {self.hotel_id}, "
             f"Check-in: {self.check_in}, Check-out: {self.check_out}, "
-            f"Status: {self.status})")
+            f"Status: {self.status})"
+        )
 
     def __eq__(self, other: object) -> bool:
         """Equality comparison based on `reservation_id`."""

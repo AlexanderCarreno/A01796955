@@ -6,9 +6,15 @@ import sys
 # Handle both module and direct script execution
 if __name__ == '__main__':
     # When executed directly (python main.py), add parent to sys.path
-    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    from hotel_system import Hotel, Customer, Reservation # pylint: disable=E0401
-    from persistence import DataPersistence # pylint: disable=E0401
+    sys.path.insert(
+        0,
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    from hotel_system import (
+        Hotel,
+        Customer,
+        Reservation
+    )  # pylint: disable=E0401
+    from persistence import DataPersistence  # pylint: disable=E0401
 else:
     # When imported as a module, use relative imports
     from .hotel_system import Hotel, Customer, Reservation
@@ -91,7 +97,8 @@ def demo_error_handling() -> None:
     validation logic reports errors (printed to stdout).
     """
     print_header("Error Handling Demo")
-    invalid_customer = Customer("C999", "No Email", "invalid-email", "555-0000")
+    invalid_customer = Customer(
+        "C999", "No Email", "invalid-email", "555-0000")
     if not invalid_customer.validate():
         print("✓ Invalid email detected - validation failed")
 
