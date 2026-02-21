@@ -2,8 +2,17 @@
 
 import os
 import sys
-from hotel_system import Hotel, Customer, Reservation
-from persistence import DataPersistence
+
+# Handle both module and direct script execution
+if __name__ == '__main__':
+    # When executed directly (python main.py), add parent to sys.path
+    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    from hotel_system import Hotel, Customer, Reservation # pylint: disable=E0401
+    from persistence import DataPersistence # pylint: disable=E0401
+else:
+    # When imported as a module, use relative imports
+    from .hotel_system import Hotel, Customer, Reservation
+    from .persistence import DataPersistence
 
 
 def print_header(title: str) -> None:

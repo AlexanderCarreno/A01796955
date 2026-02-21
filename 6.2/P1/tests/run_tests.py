@@ -1,11 +1,16 @@
 """Run unit tests for the project (placed in tests/).
 
-Usage: `python -m tests.run_tests` or `python tests/run_tests.py` from project root.
+Usage: `python tests/run_tests.py` from project root.
 """
 
 import unittest
 import sys
 import os
+
+# Add the project root to sys.path so imports work correctly
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
 
 
 def main():

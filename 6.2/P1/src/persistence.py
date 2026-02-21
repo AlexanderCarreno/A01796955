@@ -3,7 +3,12 @@
 import json
 import os
 from typing import List, Optional, Dict, Any
-from hotel_system import Hotel, Customer, Reservation
+
+# Handle both module and direct import
+try:
+    from .hotel_system import Hotel, Customer, Reservation
+except ImportError:
+    from hotel_system import Hotel, Customer, Reservation
 
 
 class DataPersistence:

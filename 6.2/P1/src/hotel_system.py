@@ -19,9 +19,12 @@ class BaseEntity(ABC):
 
 class Hotel(BaseEntity):
     """Hotel class representing a hotel with rooms and reservations."""
-
-    def __init__(self, hotel_id: str, name: str, location: str,
-                 total_rooms: int, rooms_available: int = None,
+    def __init__(self, # pylint: disable=too-many-arguments, too-many-positional-arguments
+                 hotel_id: str,
+                 name: str,
+                 location: str,
+                 total_rooms: int,
+                 rooms_available: Optional[int] = None,
                  price_per_room: float = 0.0):
         """Initialize a Hotel instance.
 
@@ -42,27 +45,31 @@ class Hotel(BaseEntity):
         self.price_per_room = price_per_room
         self.created_date = datetime.now().isoformat()
 
+    def _validate_string_field(self, _: str, value: Any) -> bool:
+        """Validate that a field is a non-empty string."""
+        return bool(value and isinstance(value, str))
+
+    def _validate_room_counts(self) -> bool:
+        """Validate room count consistency."""
+        rooms_valid = (isinstance(self.total_rooms, int) and self.total_rooms > 0 and
+                       isinstance(self.rooms_available, int) and self.rooms_available >= 0)
+        return rooms_valid and self.rooms_available <= self.total_rooms
+
+    def _validate_price(self) -> bool:
+        """Validate price field."""
+        return isinstance(self.price_per_room, (int, float)) and self.price_per_room >= 0
+
     def validate(self) -> bool:
         """Validate hotel data fields.
 
         Returns True when all required fields have acceptable types and
         values; otherwise returns False.
         """
-        if not self.hotel_id or not isinstance(self.hotel_id, str):
-            return False
-        if not self.name or not isinstance(self.name, str):
-            return False
-        if not self.location or not isinstance(self.location, str):
-            return False
-        if not isinstance(self.total_rooms, int) or self.total_rooms <= 0:
-            return False
-        if not isinstance(self.rooms_available, int) or self.rooms_available < 0:
-            return False
-        if self.rooms_available > self.total_rooms:
-            return False
-        if not isinstance(self.price_per_room, (int, float)) or self.price_per_room < 0:
-            return False
-        return True
+        return (self._validate_string_field('hotel_id', self.hotel_id) and
+                self._validate_string_field('name', self.name) and
+                self._validate_string_field('location', self.location) and
+                self._validate_room_counts() and
+                self._validate_price())
 
     def to_dict(self) -> Dict[str, Any]:
         """Serialize the Hotel to a JSON-serializable dict."""
@@ -235,8 +242,12 @@ class Customer(BaseEntity):
 
 class Reservation(BaseEntity):
     """Reservation class representing a hotel reservation."""
-    def __init__(self, reservation_id: str, customer_id: str,
-                 hotel_id: str, check_in: str, check_out: str,
+    def __init__(self, # pylint: disable=too-many-arguments, too-many-positional-arguments
+                 reservation_id: str,
+                 customer_id: str,
+                 hotel_id: str,
+                 check_in: str,
+                 check_out: str,
                  status: str = "active"):
         """Initialize a Reservation instance.
 
@@ -256,31 +267,31 @@ class Reservation(BaseEntity):
         self.status = status
         self.created_date = datetime.now().isoformat()
 
+    def _validate_string_fields(self) -> bool:
+        """Validate all required string fields."""
+        return (bool(self.reservation_id and isinstance(self.reservation_id, str)) and
+                bool(self.customer_id and isinstance(self.customer_id, str)) and
+                bool(self.hotel_id and isinstance(self.hotel_id, str)) and
+                bool(self.check_in and isinstance(self.check_in, str)) and
+                bool(self.check_out and isinstance(self.check_out, str)))
+
+    def _validate_dates(self) -> bool:
+        """Validate date format and ordering."""
+        try:
+            check_in_date = datetime.fromisoformat(self.check_in)
+            check_out_date = datetime.fromisoformat(self.check_out)
+            return check_in_date < check_out_date
+        except ValueError:
+            return False
+
     def validate(self) -> bool:
         """Validate reservation fields and date ordering.
 
         Ensures required fields are strings and that `check_in` < `check_out`.
         """
-        if not self.reservation_id or not isinstance(self.reservation_id, str):
-            return False
-        if not self.customer_id or not isinstance(self.customer_id, str):
-            return False
-        if not self.hotel_id or not isinstance(self.hotel_id, str):
-            return False
-        if not self.check_in or not isinstance(self.check_in, str):
-            return False
-        if not self.check_out or not isinstance(self.check_out, str):
-            return False
-        if self.status not in ["active", "cancelled"]:
-            return False
-        try:
-            check_in_date = datetime.fromisoformat(self.check_in)
-            check_out_date = datetime.fromisoformat(self.check_out)
-            if check_in_date >= check_out_date:
-                return False
-        except ValueError:
-            return False
-        return True
+        return (self._validate_string_fields() and
+                self.status in ["active", "cancelled"] and
+                self._validate_dates())
 
     def to_dict(self) -> Dict[str, Any]:
         """Serialize the Reservation to a JSON-serializable dict."""
