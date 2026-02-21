@@ -43,19 +43,19 @@ Program name:
 python computeSales.py priceCatalogue.json salesRecord.json
 ```
 
-Req 6
+### Req 6
 
 - The program supports large files efficiently by:
 - Using dictionary lookups for O(1) price access
 - Single-pass processing of sales records
 - Avoiding unnecessary nested loops
 
-Req 7
+### Req 7
 - Execution time is measured and displayed:
 - Printed on screen
 - Included in SalesResults.txt
 
-Req 8
+### Req 8
 - The script is compliant with PEP8.
 
 ## How It Works
