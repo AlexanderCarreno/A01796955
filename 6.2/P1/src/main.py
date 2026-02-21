@@ -7,12 +7,25 @@ from persistence import DataPersistence
 
 
 def print_header(title: str) -> None:
+    """Print a formatted header for demo sections.
+
+    Args:
+        title: The title text to print inside the header.
+    """
     print("\n" + "=" * 70)
     print(f"  {title}")
     print("=" * 70)
 
 
 def demo_hotels(persistence: DataPersistence) -> None:
+    """Run a short demonstration of hotel CRUD and listing operations.
+
+    The function creates two example hotels, saves them using the provided
+    persistence layer, retrieves one by ID, and prints all stored hotels.
+
+    Args:
+        persistence: An instance of `DataPersistence` used for storage.
+    """
     print_header("Hotel Management Demo")
     h1 = Hotel("H001", "Grand Plaza Hotel", "New York", 100, 100, 150.0)
     h2 = Hotel("H002", "Beach Resort", "Miami", 50, 50, 200.0)
@@ -26,6 +39,14 @@ def demo_hotels(persistence: DataPersistence) -> None:
 
 
 def demo_customers(persistence: DataPersistence) -> None:
+    """Run a short demonstration of customer CRUD operations.
+
+    The function creates two example customers, stores them via the
+    provided persistence layer, and retrieves one customer by ID.
+
+    Args:
+        persistence: An instance of `DataPersistence` used for storage.
+    """
     print_header("Customer Management Demo")
     c1 = Customer("C001", "John Smith", "john@example.com", "555-1001")
     c2 = Customer("C002", "Maria Garcia", "maria@example.com", "555-1002")
@@ -37,6 +58,14 @@ def demo_customers(persistence: DataPersistence) -> None:
 
 
 def demo_reservations(persistence: DataPersistence) -> None:
+    """Run a short demonstration of reservation creation and listing.
+
+    The function creates two example reservations and stores them via the
+    provided persistence layer, then prints all stored reservations.
+
+    Args:
+        persistence: An instance of `DataPersistence` used for storage.
+    """
     print_header("Reservation Management Demo")
     r1 = Reservation("R001", "C001", "H001", "2026-03-01", "2026-03-05")
     r2 = Reservation("R002", "C002", "H002", "2026-03-10", "2026-03-15")
@@ -47,6 +76,11 @@ def demo_reservations(persistence: DataPersistence) -> None:
 
 
 def demo_error_handling() -> None:
+    """Demonstrate simple validation error cases.
+
+    This function constructs intentionally invalid entities to show how the
+    validation logic reports errors (printed to stdout).
+    """
     print_header("Error Handling Demo")
     invalid_customer = Customer("C999", "No Email", "invalid-email", "555-0000")
     if not invalid_customer.validate():
@@ -54,6 +88,13 @@ def demo_error_handling() -> None:
 
 
 def main() -> None:
+    """Main demonstration entry point.
+
+    Sets up the `DataPersistence` instance (writing to the project's `output/`
+    directory), clears any previous demo data, and runs the demo sections.
+
+    If an unexpected error occurs the program exits with a non-zero status.
+    """
     print("\n" + "=" * 70)
     print("  HOTEL MANAGEMENT SYSTEM - DEMONSTRATION")
     print("=" * 70)
@@ -72,7 +113,7 @@ def main() -> None:
         print("\n" + "=" * 70)
         print("  DEMONSTRATION COMPLETED SUCCESSFULLY")
         print("=" * 70 + "\n")
-    except Exception as e:
+    except (KeyError, TypeError, ValueError) as e:
         print(f"\nError during demonstration: {str(e)}")
         sys.exit(1)
 

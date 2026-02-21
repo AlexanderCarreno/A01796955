@@ -11,12 +11,10 @@ class BaseEntity(ABC):
     @abstractmethod
     def to_dict(self) -> Dict[str, Any]:
         """Convert entity to dictionary."""
-        pass
 
     @abstractmethod
     def validate(self) -> bool:
         """Validate entity data."""
-        pass
 
 
 class Hotel(BaseEntity):
@@ -25,6 +23,17 @@ class Hotel(BaseEntity):
     def __init__(self, hotel_id: str, name: str, location: str,
                  total_rooms: int, rooms_available: int = None,
                  price_per_room: float = 0.0):
+        """Initialize a Hotel instance.
+
+        Args:
+            hotel_id: Unique hotel identifier.
+            name: Human-readable hotel name.
+            location: Hotel location string.
+            total_rooms: Total number of rooms in the hotel.
+            rooms_available: Number of rooms currently available; if None,
+                defaults to `total_rooms`.
+            price_per_room: Nightly price per room.
+        """
         self.hotel_id = hotel_id
         self.name = name
         self.location = location
@@ -34,6 +43,11 @@ class Hotel(BaseEntity):
         self.created_date = datetime.now().isoformat()
 
     def validate(self) -> bool:
+        """Validate hotel data fields.
+
+        Returns True when all required fields have acceptable types and
+        values; otherwise returns False.
+        """
         if not self.hotel_id or not isinstance(self.hotel_id, str):
             return False
         if not self.name or not isinstance(self.name, str):
@@ -51,6 +65,7 @@ class Hotel(BaseEntity):
         return True
 
     def to_dict(self) -> Dict[str, Any]:
+        """Serialize the Hotel to a JSON-serializable dict."""
         return {
             'hotel_id': self.hotel_id,
             'name': self.name,
@@ -63,6 +78,7 @@ class Hotel(BaseEntity):
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'Hotel':
+        """Create a `Hotel` instance from a dictionary (typically parsed JSON)."""
         return cls(
             hotel_id=data['hotel_id'],
             name=data['name'],
@@ -76,6 +92,12 @@ class Hotel(BaseEntity):
                location: Optional[str] = None,
                total_rooms: Optional[int] = None,
                price_per_room: Optional[float] = None) -> bool:
+        """Update mutable hotel fields.
+
+        Only applies provided fields and returns the result of `validate()`
+        after applying changes. When reducing `total_rooms`, the new value
+        must not be less than the number of occupied rooms.
+        """
         if name is not None:
             self.name = name
         if location is not None:
@@ -91,31 +113,53 @@ class Hotel(BaseEntity):
         return self.validate()
 
     def reserve_room(self) -> bool:
+        """Reserve a single room if available.
+
+        Returns True and decrements `rooms_available` on success; returns
+        False when no rooms are available.
+        """
         if self.rooms_available > 0:
             self.rooms_available -= 1
             return True
         return False
 
     def cancel_reservation(self) -> bool:
+        """Release a previously reserved room.
+
+        Returns True and increments `rooms_available` when there are fewer
+        available rooms than total; returns False if all rooms are already
+        available.
+        """
         if self.rooms_available < self.total_rooms:
             self.rooms_available += 1
             return True
         return False
 
     def __str__(self) -> str:
+        """Return a concise human-readable representation of the hotel."""
         return (f"Hotel(ID: {self.hotel_id}, Name: {self.name}, "
-                f"Location: {self.location}, "
-                f"Rooms: {self.rooms_available}/{self.total_rooms}, "
-                f"Price: ${self.price_per_room})")
+            f"Location: {self.location}, "
+            f"Rooms: {self.rooms_available}/{self.total_rooms}, "
+            f"Price: ${self.price_per_room})")
 
     def __eq__(self, other: object) -> bool:
+        """Equality comparison based on `hotel_id`."""
         if not isinstance(other, Hotel):
             return False
         return self.hotel_id == other.hotel_id
 
 
 class Customer(BaseEntity):
+    """Customer class representing a hotel customer."""
     def __init__(self, customer_id: str, name: str, email: str, phone: str):
+        """Initialize a Customer instance.
+
+        Args:
+            customer_id: Unique customer identifier.
+            name: Customer full name.
+            email: Customer email address.
+            phone: Customer phone number.
+        """
         self.customer_id = customer_id
         self.name = name
         self.email = email
@@ -123,6 +167,10 @@ class Customer(BaseEntity):
         self.created_date = datetime.now().isoformat()
 
     def validate(self) -> bool:
+        """Validate customer data fields.
+
+        Returns True when all required fields are present and valid.
+        """
         if not self.customer_id or not isinstance(self.customer_id, str):
             return False
         if not self.name or not isinstance(self.name, str):
@@ -136,6 +184,7 @@ class Customer(BaseEntity):
         return True
 
     def to_dict(self) -> Dict[str, Any]:
+        """Serialize the Customer to a JSON-serializable dict."""
         return {
             'customer_id': self.customer_id,
             'name': self.name,
@@ -146,6 +195,10 @@ class Customer(BaseEntity):
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'Customer':
+        """Create a `Customer` instance from a dictionary.
+
+        This is typically used when loading from persisted JSON data.
+        """
         return cls(
             customer_id=data['customer_id'],
             name=data['name'],
@@ -156,6 +209,10 @@ class Customer(BaseEntity):
     def update(self, name: Optional[str] = None,
                email: Optional[str] = None,
                phone: Optional[str] = None) -> bool:
+        """Update customer fields and return validation result.
+
+        Applies only provided fields; returns result of `validate()`.
+        """
         if name is not None:
             self.name = name
         if email is not None:
@@ -165,19 +222,32 @@ class Customer(BaseEntity):
         return self.validate()
 
     def __str__(self) -> str:
+        """Return a readable representation of the customer."""
         return (f"Customer(ID: {self.customer_id}, Name: {self.name}, "
-                f"Email: {self.email}, Phone: {self.phone})")
+            f"Email: {self.email}, Phone: {self.phone})")
 
     def __eq__(self, other: object) -> bool:
+        """Equality comparison based on `customer_id`."""
         if not isinstance(other, Customer):
             return False
         return self.customer_id == other.customer_id
 
 
 class Reservation(BaseEntity):
+    """Reservation class representing a hotel reservation."""
     def __init__(self, reservation_id: str, customer_id: str,
                  hotel_id: str, check_in: str, check_out: str,
                  status: str = "active"):
+        """Initialize a Reservation instance.
+
+        Args:
+            reservation_id: Unique reservation identifier.
+            customer_id: ID of the customer who made the reservation.
+            hotel_id: ID of the hotel reserved.
+            check_in: ISO-format check-in date string.
+            check_out: ISO-format check-out date string.
+            status: Reservation status ("active" or "cancelled").
+        """
         self.reservation_id = reservation_id
         self.customer_id = customer_id
         self.hotel_id = hotel_id
@@ -187,6 +257,10 @@ class Reservation(BaseEntity):
         self.created_date = datetime.now().isoformat()
 
     def validate(self) -> bool:
+        """Validate reservation fields and date ordering.
+
+        Ensures required fields are strings and that `check_in` < `check_out`.
+        """
         if not self.reservation_id or not isinstance(self.reservation_id, str):
             return False
         if not self.customer_id or not isinstance(self.customer_id, str):
@@ -209,6 +283,7 @@ class Reservation(BaseEntity):
         return True
 
     def to_dict(self) -> Dict[str, Any]:
+        """Serialize the Reservation to a JSON-serializable dict."""
         return {
             'reservation_id': self.reservation_id,
             'customer_id': self.customer_id,
@@ -221,6 +296,10 @@ class Reservation(BaseEntity):
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'Reservation':
+        """Create a `Reservation` instance from a dictionary.
+
+        Used when loading reservations from persisted JSON.
+        """
         return cls(
             reservation_id=data['reservation_id'],
             customer_id=data['customer_id'],
@@ -231,18 +310,24 @@ class Reservation(BaseEntity):
         )
 
     def cancel(self) -> bool:
+        """Mark the reservation as cancelled if it is currently active.
+
+        Returns True when status changed; otherwise False.
+        """
         if self.status == "active":
             self.status = "cancelled"
             return True
         return False
 
     def __str__(self) -> str:
+        """Return a readable representation of the reservation."""
         return (f"Reservation(ID: {self.reservation_id}, "
-                f"Customer: {self.customer_id}, Hotel: {self.hotel_id}, "
-                f"Check-in: {self.check_in}, Check-out: {self.check_out}, "
-                f"Status: {self.status})")
+            f"Customer: {self.customer_id}, Hotel: {self.hotel_id}, "
+            f"Check-in: {self.check_in}, Check-out: {self.check_out}, "
+            f"Status: {self.status})")
 
     def __eq__(self, other: object) -> bool:
+        """Equality comparison based on `reservation_id`."""
         if not isinstance(other, Reservation):
             return False
         return self.reservation_id == other.reservation_id
